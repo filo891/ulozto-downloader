@@ -393,19 +393,21 @@ class JSONReport:
 
     def __init__(self, info: DownloadInfo) -> None:
         self.status = Status.DOWNLOADING
-        self.file = info.filename,
-        self.url = info.url,
+        self.file = info.filename
+        self.url = info.url
         self.size = f"{round(info.total_size / 1024**2, 2)} MB"
         self.size_float = info.total_size
+        self.downloaded_float = 0
 
-    def update(self, down_size, total_bps, now_bps):
-        self.downloaded = f"{(down_size / 1024 ** 2):.2f} MB",
-        self.percent = f"{(down_size / self.size_float * 100):.2f} %",
-        self.avg_speed = f"{(total_bps / 1024 ** 2):.2f} MB/s",
-        self.curr_speed = f"{(now_bps / 1024 ** 2):.2f} MB/s",
+    def update(self, down_size: float, total_bps: float, now_bps: float):
+        self.downloaded = f"{(down_size / 1024 ** 2):.2f} MB"
+        self.downloaded_float = down_size
+        self.percent = f"{(down_size / self.size_float * 100):.2f} %"
+        self.avg_speed = f"{(total_bps / 1024 ** 2):.2f} MB/s"
+        self.curr_speed = f"{(now_bps / 1024 ** 2):.2f} MB/s"
         
         remaining = (self.size_float - down_size) / total_bps if total_bps > 0 else 0
         self.remaining = f"{timedelta(seconds=round(remaining))}"
 
     def __str__(self) -> str:
-        return json.dumps(self.__dict__).replace('["', '"').replace('"]', '"')
+        return json.dumps(self.__dict__)
